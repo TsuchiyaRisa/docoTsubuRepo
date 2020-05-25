@@ -14,40 +14,44 @@ import model.LoginLogic;
 import model.User;
 
 /**
- * Servlet implementation class Login
+ * ログイン処理用サーブレットクラス
  */
 @WebServlet("/Login")
 public class Login extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//リクエストパラメータの取得
-		request.setCharacterEncoding("UTF-8");
-		String name = request.getParameter("name");
-		String pass = request.getParameter("pass");
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        //リクエストパラメータの取得
+        request.setCharacterEncoding("UTF-8");
+        String name = request.getParameter("name");//ユーザ名
+        String pass = request.getParameter("pass");//パスワード
 
-		//Userインスタンス（ユーザー情報）の生成
-		User user = new User(name,pass);
+        //Userインスタンス（ユーザー情報）の生成
+        User user = new User(name, pass);
 
-		//ログイン処理
-		LoginLogic loginLogic = new LoginLogic();
-		boolean isLogin = loginLogic.execute(user);
+        //ログイン処理
+        LoginLogic loginLogic = new LoginLogic();
+        boolean isLogin = loginLogic.execute(user);
 
-		 HttpSession session = request.getSession();
+        HttpSession session = request.getSession();
 
-		//ログイン成功時の処理
-		if(isLogin) {
-		//ユーザー情報をセッションスコープに保存
-			 session.setAttribute("loginUser", user);
-		} else {
-			session.removeAttribute("loginUser");
-		}
-		//ログイン結果画面にフォワード
-		RequestDispatcher dispatcher = request.getRequestDispatcher(
-				"/WEB-INF/jsp/loginResult.jsp");
-		dispatcher.forward(request, response);
-	}
+        //ログイン成功時の処理
+        if (isLogin) {
+            //ユーザー情報をセッションスコープに保存
+            session.setAttribute("loginUser", user);
+            //ログイン失敗時の処理
+        } else {
+            //ユーザー情報をセッションスコープから削除
+            session.removeAttribute("loginUser");
+        }
+
+        //ログイン結果画面にフォワード
+        RequestDispatcher dispatcher = request.getRequestDispatcher(
+                "/WEB-INF/jsp/loginResult.jsp");
+        dispatcher.forward(request, response);
+    }
 }

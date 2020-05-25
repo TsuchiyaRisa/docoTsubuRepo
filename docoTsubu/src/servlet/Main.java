@@ -15,61 +15,132 @@ import model.PostMutterLogic;
 import model.User;
 
 /**
- * Servlet implementation class Main
+ * メイン画面表示用サーブレットクラス
  */
 @WebServlet("/Main")
 public class Main extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        //ログインしているか確認するため
+        //セッションスコープに保存されたユーザ情報を取得
+        HttpSession session = request.getSession();
+        User loginUser = (User) session.getAttribute("loginUser");
 
-		//ログインしているか確認するため
-		//セッションスコープに保存されたユーザ情報を取得
-		HttpSession session = request.getSession();
-		User loginUser = (User)session.getAttribute("loginUser");
+        if (loginUser == null) {
+            //ログインしていない場合
+            //リダイレクト
+            response.sendRedirect("/docoTsubu/");
+        } else {//ログイン済みの場合
+            //リクエストパラメータの取得
+            request.setCharacterEncoding("UTF-8");
+            String method = request.getParameter("method");
 
-		if(loginUser == null) {
-			//ログインしていない場合
-			//リダイレクト
-			response.sendRedirect("/docoTsubu/");
-		} else {//ログイン済みの場合
-			//フォワード
-			RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/main.jsp");
-			dispatcher.forward(request, response);
-		}
-	}
+            //押下されたボタンによってメイン画面のタイトルとボタン名を設定
+            if (method == null || method.length() == 0) {
+                //リダイレクト
+                response.sendRedirect("/docoTsubu/");
+            } else if (method.equals("insert")) {
+                //メイン画面のタイトルをリクエストスコープに保存
+                request.setAttribute("title", "つぶやき投稿");
+            } else if (method.equals("update")) {
+                //メイン画面のタイトルをリクエストスコープに保存
+                request.setAttribute("title", "つぶやき編集");
+            } else if (method.equals("delete")) {
+                //メイン画面のタイトルをリクエストスコープに保存
+                request.setAttribute("title", "つぶやき削除");
+            }
+            //フォワード
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/main.jsp");
+            dispatcher.forward(request, response);
+        }
+    }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        //リクエストパラメータの取得
+        request.setCharacterEncoding("UTF-8");
+        String insert = request.getParameter("insert");//つぶやき投稿ボタン押下情報
+        String update = request.getParameter("update");//つぶやき編集ボタン押下情報
+        String delete = request.getParameter("delete");//つぶやき削除ボタン押下情報
+        String number = request.getParameter("number");//つぶやきNo
+        String text = request.getParameter("text");//つぶやき
 
-		//リクエストパラメータの取得
-		request.setCharacterEncoding("UTF-8");
-		String text = request.getParameter("text");
+        //つぶやき投稿ボタンを押下した場合
+        if (insert != null && insert.length() != 0) {
+            //メイン画面のタイトルをリクエストスコープに保存
+            request.setAttribute("title", "つぶやき投稿");
 
-		//入力値チェック
-		if(text != null && text.length() != 0) {
-			//セッションスコープに保存されたユーザ情報を取得
-			HttpSession session = request.getSession();
-			User loginUser = (User)session.getAttribute("loginUser");
+            //入力値チェック
+            if (text != null && text.length() != 0) {
+                //セッションスコープに保存されたユーザ情報を取得
+                HttpSession session = request.getSession();
+                User loginUser = (User) session.getAttribute("loginUser");
 
-			//つぶやきをDBに追加
-			Mutter mutter = new Mutter("0",loginUser.getName(),text);
-			PostMutterLogic postMutterLogic = new PostMutterLogic();
-			postMutterLogic.insertTsubuyaki(mutter, request);
+                //つぶやきをDBに追加
+                Mutter mutter = new Mutter("0", loginUser.getName(), text);
+                PostMutterLogic postMutterLogic = new PostMutterLogic();
+                postMutterLogic.insertTsubuyaki(mutter, request);
 
-		} else {
-			//エラーメッセージをリクエストスコープに保存
-			request.setAttribute("errorMsg", "つぶやきが入力されていません");
-		}
+            } else {
+                //エラーメッセージをリクエストスコープに保存
+                request.setAttribute("errorMsg", "つぶやきが入力されていません");
+            }
+            //つぶやき編集ボタンを押下した場合
+        } else if (update != null && update.length() != 0) {
+            //メイン画面のタイトルをリクエストスコープに保存
+            request.setAttribute("title", "つぶやき編集");
 
-		//メイン画面にフォワード
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/main.jsp");
-		dispatcher.forward(request, response);
-	}
+            //入力値チェック
+            if (number == null || number.length() == 0) {
+                //エラーメッセージをリクエストスコープに保存
+                request.setAttribute("errorMsg", "つぶやきNoが入力されていません");
+            } else if (text == null || text.length() == 0) {
+                //エラーメッセージをリクエストスコープに保存
+                request.setAttribute("errorMsg", "つぶやきが入力されていません");
+            } else {
+                //セッションスコープに保存されたユーザ情報を取得
+                HttpSession session = request.getSession();
+                User loginUser = (User) session.getAttribute("loginUser");
 
+                //つぶやきをDBに追加
+                Mutter mutter = new Mutter(number, loginUser.getName(), text);
+                PostMutterLogic postMutterLogic = new PostMutterLogic();
+                postMutterLogic.changeTsubuyaki(mutter, request);
+            }
+            //つぶやき削除ボタンを押下した場合
+        } else if (delete != null && delete.length() != 0) {
+            //メイン画面のタイトルをリクエストスコープに保存
+            request.setAttribute("title", "つぶやき削除");
+
+            //入力値チェック
+            if (number != null && number.length() != 0) {
+                //セッションスコープに保存されたユーザ情報を取得
+                HttpSession session = request.getSession();
+                User loginUser = (User) session.getAttribute("loginUser");
+
+                //つぶやきをDBから削除
+                Mutter mutter = new Mutter(number, loginUser.getName(), "");
+                PostMutterLogic postMutterLogic = new PostMutterLogic();
+                postMutterLogic.deleteTsubuyaki(mutter, request);
+
+            } else {
+                //エラーメッセージをリクエストスコープに保存
+                request.setAttribute("errorMsg", "つぶやきNoが入力されていません");
+            }
+        } else {
+            //リダイレクト
+            response.sendRedirect("/docoTsubu/");
+        }
+        //メイン画面にフォワード
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/main.jsp");
+        dispatcher.forward(request, response);
+    }
 }
