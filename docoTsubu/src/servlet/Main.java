@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import model.Mutter;
 import model.PostMutterLogic;
 import model.User;
 
@@ -83,11 +82,11 @@ public class Main extends HttpServlet {
                 //セッションスコープに保存されたユーザ情報を取得
                 HttpSession session = request.getSession();
                 User loginUser = (User) session.getAttribute("loginUser");
+                String userName = loginUser.getName();
 
                 //つぶやきをDBに追加
-                Mutter mutter = new Mutter("0", loginUser.getName(), text);
                 PostMutterLogic postMutterLogic = new PostMutterLogic();
-                postMutterLogic.insertTsubuyaki(mutter, request);
+                postMutterLogic.insertTsubuyaki(userName, text, request);
 
             } else {
                 //エラーメッセージをリクエストスコープに保存
@@ -106,14 +105,9 @@ public class Main extends HttpServlet {
                 //エラーメッセージをリクエストスコープに保存
                 request.setAttribute("errorMsg", "つぶやきが入力されていません");
             } else {
-                //セッションスコープに保存されたユーザ情報を取得
-                HttpSession session = request.getSession();
-                User loginUser = (User) session.getAttribute("loginUser");
-
                 //つぶやきをDBに追加
-                Mutter mutter = new Mutter(number, loginUser.getName(), text);
                 PostMutterLogic postMutterLogic = new PostMutterLogic();
-                postMutterLogic.changeTsubuyaki(mutter, request);
+                postMutterLogic.changeTsubuyaki(text, number, request);
             }
             //つぶやき削除ボタンを押下した場合
         } else if (delete != null && delete.length() != 0) {
@@ -122,14 +116,9 @@ public class Main extends HttpServlet {
 
             //入力値チェック
             if (number != null && number.length() != 0) {
-                //セッションスコープに保存されたユーザ情報を取得
-                HttpSession session = request.getSession();
-                User loginUser = (User) session.getAttribute("loginUser");
-
                 //つぶやきをDBから削除
-                Mutter mutter = new Mutter(number, loginUser.getName(), "");
                 PostMutterLogic postMutterLogic = new PostMutterLogic();
-                postMutterLogic.deleteTsubuyaki(mutter, request);
+                postMutterLogic.deleteTsubuyaki(number, request);
 
             } else {
                 //エラーメッセージをリクエストスコープに保存

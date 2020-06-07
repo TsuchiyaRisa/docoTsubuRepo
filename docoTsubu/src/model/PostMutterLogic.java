@@ -26,15 +26,15 @@ public class PostMutterLogic {
      * @param mutter　つぶやき情報１レーコード分
      * @param request　リクエストスコープ
      */
-    public void insertTsubuyaki(Mutter mutter, HttpServletRequest request) {
+    public void insertTsubuyaki(String userName, String text,HttpServletRequest request) {
         try {
             //データベースに接続
             con = DataBaseConnection.Connection();
             //tsubuyakiテーブルにつぶやきを登録
             smt = con.prepareStatement(
                     "insert into tsubuyaki_table(user_name, tsubuyaki) values (?, ?)");
-            smt.setString(1, mutter.getUserName());
-            smt.setString(2, mutter.getText());
+            smt.setString(1, userName);
+            smt.setString(2, text);
             insertResult = smt.executeUpdate();
         } catch (Exception e) {
             //エラ〜メッセージをリクエストスコープに保存
@@ -47,15 +47,15 @@ public class PostMutterLogic {
      * @param mutter　つぶやき情報１レーコード分
      * @param request　リクエストスコープ
      */
-    public void changeTsubuyaki(Mutter mutter, HttpServletRequest request) {
+    public void changeTsubuyaki(String text, String number, HttpServletRequest request) {
         try {
             //データベースに接続
             con = DataBaseConnection.Connection();
             //tsubuyakiテーブルつぶやきの編集
             smt2 = con.prepareStatement(
                     "update tsubuyaki_table set tsubuyaki = ? where tsubuyaki_no = ?");
-            smt2.setString(1, mutter.getText());
-            smt2.setString(2, mutter.getNumber());
+            smt2.setString(1, text);
+            smt2.setString(2, number);
             updateResult = smt2.executeUpdate();
         } catch (Exception e) {
             //エラ〜メッセージをリクエストスコープに保存
@@ -68,14 +68,14 @@ public class PostMutterLogic {
      * @param mutter　つぶやき情報１レーコード分
      * @param request　リクエストスコープ
      */
-    public void deleteTsubuyaki(Mutter mutter, HttpServletRequest request) {
+    public void deleteTsubuyaki(String number, HttpServletRequest request) {
         try {
             //データベースに接続
             con = DataBaseConnection.Connection();
             //tsubuyakiテーブルつぶやきの削除
             smt3 = con.prepareStatement(
                     "delete from tsubuyaki_table where tsubuyaki_no = ?");
-            smt3.setString(1, mutter.getNumber());
+            smt3.setString(1, number);
             deleteResult = smt3.executeUpdate();
         } catch (Exception e) {
             //エラ〜メッセージをリクエストスコープに保存

@@ -14,7 +14,7 @@ public class User implements Serializable {
     }
 
     /**
-     * ユーザ情報設定メソッド
+     * ユーザ情報設定コンストラクタ
      * @param name　ユーザ名
      * @param pass　パスワード
      */

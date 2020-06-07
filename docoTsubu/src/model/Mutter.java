@@ -15,8 +15,8 @@ public class Mutter implements Serializable {
     }
 
     /**
-     * つぶやき情報設定メソッド
-     * @param number　つぶやきNo
+     * つぶやき一覧表示用コンストラクタ
+     * @param numbe　つぶやきNo
      * @param userName　ユーザ名
      * @param text　つぶやき
      */
@@ -28,26 +28,49 @@ public class Mutter implements Serializable {
 
     /**
      * つぶやきNo取得メソッド
-     * @returnつぶやきNo
+     * @return number　つぶやきNo
      */
     public String getNumber() {
         return number;
     }
 
     /**
+     * つぶやきNo設定メソッド
+     * @param number セットする つぶやきNo
+     */
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    /**
      * ユーザ名取得メソッド
-     * @returnユーザ名
+     * @return userName　ユーザ名
      */
     public String getUserName() {
         return userName;
     }
 
     /**
+     * ユーザ名設定メソッド
+     * @param userName セットする ユーザ名
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    /**
      * つぶやき取得メソッド
-     * @returnつぶやき
+     * @return text　つぶやき
      */
     public String getText() {
         return text;
     }
 
+    /**
+     * つぶやき設定メソッド
+     * @param text セットする つぶやき
+     */
+    public void setText(String text) {
+        this.text = text;
+    }
 }
