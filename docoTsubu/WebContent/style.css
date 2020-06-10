@@ -1,0 +1,11 @@
+@charset "UTF-8";
+
+/*5px余白をいれる*/
+.blank5{
+  margin-right: 5px;
+}
+
+/*10px余白をいれる*/
+.blank10{
+  margin-right: 10px;
+}
